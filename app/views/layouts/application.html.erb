@@ -10,6 +10,12 @@
   </head>
 
   <body>
+    <% flash.each do |_, value| %>
+      <p><%= value %></p>
+    <% end %>
+    <% if logged_in? %>
+      <%= link_to 'ログアウト', logout_path, method: :delete %>
+    <% end %>
     <%= yield %>
   </body>
 </html>
