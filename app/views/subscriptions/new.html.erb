@@ -1,0 +1,57 @@
+<h1>支払い画面</h1>
+
+<h2>ステップ1 カードを登録</h2>
+<% if current_user.payjp_customer.nil? %>
+  カードを登録してください。<br>
+  <%= form_with url: payjp_customers_path, id: 'js-payment-form', local: true do %>
+    <script>
+        function onCreated() {
+            document.querySelector("#js-payment-form").submit()
+        }
+    </script>
+    <script
+      type="text/javascript"
+      src="https://checkout.pay.jp/"
+      class="payjp-button"
+      data-key="pk_test_6bfc4efe45bd5356c9723afa"
+      data-on-created="onCreated"
+      data-text="カードを登録"
+      data-submit-text="カードを登録"
+      data-partial="true">
+    </script>
+  <% end %>
+<% else %>
+  カード登録済みです。<br>
+  名義: <%= current_user.payjp_customer.name %><br>
+  カード番号: xxxx-xxxx-xxxx-<%= current_user.payjp_customer.last4 %><br>
+  有効期限: <%= current_user.payjp_customer.exp_year %>/<%= current_user.payjp_customer.exp_month %><br><br>
+<% end %>
+
+
+<h2>ステップ2 支払い</h2>
+
+<% if current_user.payjp_customer.nil?  %>
+  先にカードを登録してください。
+<% else %>
+  <% if @customer.subscriptions.count > 0 %>
+      申し込み中のプラン<br>
+      プラン名: <%= @customer.subscriptions.data[0].plan.name %><br>
+      料金: 月額<%= @customer.subscriptions.data[0].plan.amount %><br>
+      次回課金日: <%= Time.at(@customer.subscriptions.data[0].current_period_end).to_date %><br>
+      <% if @customer.subscriptions.data[0].status == "canceled" %>
+        解約済みです<br>
+        <%= link_to '再開する', resume_subscription_path(subscription_id: @customer.subscriptions.data[0].id), method: :post %>
+      <% else %>
+        <%= link_to '解約する', subscription_path(subscription_id: @customer.subscriptions.data[0].id), method: :delete %>
+      <% end %>
+  <% else %>
+    <%= form_with url: subscription_path, local: true do |f| %>
+      <% @plans.each do |plan| %>
+        <%= f.radio_button :plan_id, plan.id, required: true %>
+        <%= plan.name %>
+        月額<%= plan.amount %><br>
+      <% end %>
+      <%= f.submit '支払う' %>
+    <% end %>
+  <% end %>
+<% end %>

@@ -1,0 +1,8 @@
+<h1>Subscriptions#complete</h1>
+<p>Find me in app/views/subscriptions/complete.html.erb</p>
+
+<% if current_user.payjp_customer.present?  %>
+  名義: <%= current_user.payjp_customer.name %><br>
+  カード番号: xxxx-xxxx-xxxx-<%= current_user.payjp_customer.last4 %><br>
+  有効期限: <%= current_user.payjp_customer.exp_year %>/<%= current_user.payjp_customer.exp_month %><br>
+<% end %>

@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  customer_id: MyString
+  user: one
+  last4: MyString
+  exp_year: MyString
+  exp_month: MyString
+  name: MyString
+
+two:
+  customer_id: MyString
+  user: two
+  last4: MyString
+  exp_year: MyString
+  exp_month: MyString
+  name: MyString
